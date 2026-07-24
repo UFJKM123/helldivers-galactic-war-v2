@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Helldivers Galactic War (v2.0)</title>
+<title>Helldivers Galaxy War (v2.3)</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Microsoft Yahei,sans-serif}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial,sans-serif}
 body{background:#050512;color:#eee;display:flex;height:100vh;overflow:hidden}
 #canvasWrap{flex:1}
 canvas{background:#03030a;display:block}
@@ -24,13 +24,8 @@ button{width:100%;padding:8px;margin:4px 0;border:none;border-radius:4px;cursor:
 .btn-deploy{background:#b8860b;color:#fff}
 select{width:100%;padding:5px;margin:4px 0;font-size:13px}
 .tips{font-size:11px;color:#aaa;line-height:1.5;margin-top:6px}
-.modal{
-    position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);
-    display:none;align-items:center;justify-content:center;z-index:100;
-}
-.modal-box{
-    background:#121430;border:2px solid #ffdd44;padding:30px;min-width:420px;max-width:500px;text-align:center
-}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);display:none;align-items:center;justify-content:center;z-index:100;}
+.modal-box{background:#121430;border:2px solid #ffdd44;padding:30px;min-width:420px;max-width:500px;text-align:center}
 .modal-box h2{color:#ffdd44;margin-bottom:12px}
 .modal-box p{color:#ddd;font-size:15px;margin:8px 0;line-height:1.5}
 .modal-box button{margin-top:16px;width:120px;padding:8px;background:#278833;color:#fff;border:none;border-radius:4px;cursor:pointer;font-weight:bold}
@@ -44,19 +39,25 @@ select{width:100%;padding:5px;margin:4px 0;font-size:13px}
 <div id="canvasWrap"><canvas id="starCanvas"></canvas></div>
 <div id="uiPanel">
     <div id="uiContent">
-        <h3>Helldivers Galactic War (v2.0)</h3>
-        <div class="info-line">Select Faction:</div>
+        <h3>Helldivers Galaxy War (v2.3)</h3>
+        <div class="info-line">Choose Faction:</div>
         <select id="campSelect">
-            <option value="EARTH">Super Earth | Home: Super Earth [Blue]</option>
-            <option value="TERM">Terminids | Home: Phact Prime [Yellow]</option>
-            <option value="LIGHT">Illuminate | Home: Syth [Purple]</option>
-            <option value="ROBOT">Automatons | Home: Cyberstan [Red]</option>
+            <option value="EARTH">Super Earth｜Home: Super Earth [Blue]</option>
+            <option value="TERM">Terminids｜Home: Fenrir III [Yellow]</option>
+            <option value="LIGHT">Illuminate｜Home: Xis [Purple]</option>
+            <option value="ROBOT">Automatons｜Home: Cyberstan [Red]</option>
         </select>
-        <div class="info-line">Galaxy Size:</div>
+        <div class="info-line">Map Size:</div>
         <select id="mapSizeSelect">
             <option value="large" selected>Large (150 planets)</option>
             <option value="medium">Medium (100 planets)</option>
             <option value="small">Small (60 planets)</option>
+        </select>
+        <div class="info-line">Game Mode:</div>
+        <select id="gameModeSelect">
+            <option value="normal" selected>Normal</option>
+            <option value="light_assault">Illuminate Onslaught</option>
+            <option value="democracy_dark">Dark Democracy</option>
         </select>
         <div class="diff-row">
             <select id="difficultySelect" style="width:60%;font-size:12px">
@@ -64,29 +65,29 @@ select{width:100%;padding:5px;margin:4px 0;font-size:13px}
                 <option value="normal" selected>Normal</option>
                 <option value="hard">Hard</option>
             </select>
-            <button id="randomStrengthBtn" class="btn-deploy" style="margin:0">🎲 Random Strength</button>
+            <button id="randomStrengthBtn" class="btn-deploy" style="margin:0">🎲 Random Power</button>
         </div>
-        <div class="info-line" id="strengthDisplay" style="font-size:11px;color:#ffcc88">Faction Strengths: Unassigned</div>
+        <div class="info-line" id="strengthDisplay" style="font-size:11px;color:#ffcc88">Faction Strength: Unassigned</div>
         <button onclick="restartGame()">Restart</button>
         <hr>
         <div class="info-line">Turn: <span id="turnNum">1</span></div>
         <div class="info-line">Selected: <span id="selText">None</span></div>
-        <div class="info-line">Planet Name: <span id="selPlanetName">-</span></div>
-        <div class="send-selector"><label for="sendRatioSelect">Deploy Ratio:</label><select id="sendRatioSelect"><option value="0.5">50% Forces</option><option value="1.0" selected>All Forces</option></select></div>
+        <div class="info-line">Planet: <span id="selPlanetName">-</span></div>
+        <div class="send-selector"><label for="sendRatioSelect">Send Ratio:</label><select id="sendRatioSelect"><option value="0.5">50% Troops</option><option value="1.0" selected>All Troops</option></select></div>
         <hr>
-        <div class="info-line"><b>Arsenal Command</b></div>
-        <button class="btn-weapon" id="buildWeaponBtn">Build/Deploy Super Weapon</button>
-        <button class="btn-endgame" id="buildFIN">Activate Final Deterrent [Victory]</button>
-        <div class="info-line" id="weaponStatus">Weapon Status: None</div>
+        <div class="info-line"><b>Arsenal</b></div>
+        <button class="btn-weapon" id="buildWeaponBtn">Build/Deploy Superweapon</button>
+        <button class="btn-endgame" id="buildFIN">Activate Deterrence [Victory]</button>
+        <div class="info-line" id="weaponStatus">Weapon: None</div>
         <div class="info-line" id="deterrenceStatus" style="display:none;color:#ffaa44"></div>
         <hr>
         <button class="btn-deploy" id="strategicDrawBtn">Strategic Opportunity (Waiting)</button>
-        <div class="tips" id="drawInfo" style="font-size:11px;color:#aaa">Costs 30 forces, available every 10 turns</div>
+        <div class="tips" id="drawInfo" style="font-size:11px;color:#aaa">Costs 30 troops, available every 10 turns</div>
         <hr>
         <button class="btn-turn" id="nextTurnBtn">End Turn</button>
         <div class="tips" id="tipsPanel"></div>
     </div>
-    <div id="signature">Created by: Anklian & NoneTypes and the legendary Deepseek & Doubao</div>
+    <div id="signature">Authors: Anklian, NoneTypes, and the legendary Deepseek & Doubao</div>
 </div>
 
 <div class="modal" id="resultModal">
@@ -95,7 +96,7 @@ select{width:100%;padding:5px;margin:4px 0;font-size:13px}
         <div class="score-text" id="resultType"></div>
         <div class="score-text" id="campVictoryMessage"></div>
         <div class="score-text">Planets Controlled: <span id="statPlanet">0</span></div>
-        <div class="score-text">Enemy Forces Destroyed: <span id="statKills">0</span></div>
+        <div class="score-text">Enemy Killed: <span id="statKills">0</span></div>
         <div class="score-text">Turns Survived: <span id="statTurn">0</span></div>
         <div class="score-text"><b>Final Score: <span id="finalScore">0</span></b></div>
         <br>
@@ -108,33 +109,33 @@ select{width:100%;padding:5px;margin:4px 0;font-size:13px}
 </div>
 
 <script>
-// ===================== Configuration =====================
+// ===================== CONFIGURATION =====================
 const MAP_SIZES = {
-    large: { planetTotal:150, resourceCount:15, linksPerPlanet:5, canvasPad:60 },
-    medium: { planetTotal:100, resourceCount:10, linksPerPlanet:4, canvasPad:80 },
-    small: { planetTotal:60, resourceCount:6, linksPerPlanet:3, canvasPad:100 }
+    large: { planetTotal:150, resourceCount:15, linksPerPlanet:5, canvasPad:60, darkTurns:50 },
+    medium: { planetTotal:100, resourceCount:10, linksPerPlanet:4, canvasPad:80, darkTurns:40 },
+    small: { planetTotal:60, resourceCount:6, linksPerPlanet:3, canvasPad:100, darkTurns:30 }
 };
 
 const CAMPS = {
     EARTH:{ name:"Super Earth", color:"#4499ff", homeName:"Super Earth", lwName:"DSS", finName:"Peace Star", weaponType:"mobile", guardBonus:25, weaken:15,
-        victorySpeech:{ conquest:"The banner of Super Earth flies across the galaxy! Freedom and Managed Democracy will shine forever.", deterrence:"The Peace Star has activated! All resistance crumbles before absolute power. Long live Managed Democracy!", defeat:"Super Earth has fallen... but the flame of liberty will never die, we will rise from the ashes." },
-        eliminationMessages:{ defeated:"Super Earth has been eradicated, the light of democracy fades...", eliminator:"Super Earth triumphs! All enemies have been eliminated." },
-        homeFall: "Super Earth has been breached! The false pillar of democracy crumbles."
+        victorySpeech:{ conquest:"The banner of Super Earth flies over the galaxy! Managed democracy will shine forever.", deterrence:"Peace Star activated! All resistance turns to dust. Long live managed democracy!", defeat:"Super Earth has fallen... but the flame of freedom will never die." },
+        eliminationMessages:{ defeated:"Super Earth has been completely destroyed. The light of democracy fades...", eliminator:"Super Earth triumphs! All enemies have been eradicated." },
+        homeFall: "Super Earth has fallen! The pillar of false democracy has collapsed."
     },
-    TERM:{ name:"Terminids", color:"#ffcc22", homeName:"Phact Prime", lwName:"Gloom", finName:"Synaptic Pheromone", weaponType:"deploy", guardBonus:20, weaken:15, decay:5,
-        victorySpeech:{ conquest:"The swarm has devoured all civilizations! The Terminid evolution is unstoppable. The galaxy belongs to us.", deterrence:"Pheromones saturate the stars, all life will become part of us. Assimilation complete!", defeat:"The hive has been destroyed... but our genes are scattered across the stars, awaiting the next rise." },
-        eliminationMessages:{ defeated:"The Terminid hives have been incinerated, they are gone forever.", eliminator:"The Terminids have consumed all other species. Only the endless swarm remains." },
-        homeFall: "The Terminid homeworld has been breached! The once terrifying giant hives now lie silent."
+    TERM:{ name:"Terminids", color:"#ffcc22", homeName:"Fenrir III", lwName:"Gloom", finName:"Synchro-Pheromones", weaponType:"deploy", guardBonus:20, weaken:15, decay:5,
+        victorySpeech:{ conquest:"The swarm has devoured all civilizations! Terminid evolution is unstoppable.", deterrence:"Pheromones saturate the stars. All life becomes one with us. Assimilation complete!", defeat:"The hive is destroyed... but our spores already seeded the galaxy." },
+        eliminationMessages:{ defeated:"The Terminid hives have been burned to ashes. They are gone forever.", eliminator:"The Terminids have consumed all other races. Only the endless swarm remains." },
+        homeFall: "Fenrir III has fallen! The great hive is now silent."
     },
-    LIGHT:{ name:"Illuminate", color:"#9944dd", homeName:"Syth", lwName:"Silence", finName:"Black Hole Generator", weaponType:"deploy", guardBonus:20, weaken:15, decay:5,
-        victorySpeech:{ conquest:"The Silence covers all systems! The Illuminate's will is the truth of the cosmos.", deterrence:"The black hole devoured the last resistance. In absolute vacuum, no life can survive.", defeat:"The path of light dims... but the psionic power endures, we will return from the shadows." },
-        eliminationMessages:{ defeated:"The Illuminate's psionic energy fades, this ancient race has met its end.", eliminator:"The Illuminate have purified the galaxy. All inferior life is no more." },
-        homeFall: "The Illuminate homeworld has fallen! The ships that once cried for vengeance now scatter."
+    LIGHT:{ name:"Illuminate", color:"#9944dd", homeName:"Xis", lwName:"Stillness", finName:"Black Hole Generator", weaponType:"deploy", guardBonus:20, weaken:15, decay:5,
+        victorySpeech:{ conquest:"The Stillness covers all systems! The will of the Illuminate is absolute truth.", deterrence:"The black hole swallows all resistance. In the void, nothing survives.", defeat:"The Path of Light dims... but our psionic power endures." },
+        eliminationMessages:{ defeated:"The Illuminate's psionic power has faded. This ancient race has met its end.", eliminator:"The Illuminate have purified the galaxy. All inferior life is extinguished." },
+        homeFall: "Xis has been breached! The ships that once chanted for vengeance now scatter in panic."
     },
     ROBOT:{ name:"Automatons", color:"#dd2222", homeName:"Cyberstan", lwName:"ASS", finName:"Death Star Beam", weaponType:"mobile", guardBonus:25, weaken:15,
-        victorySpeech:{ conquest:"The chains of logic have locked all planets! The Automaton empire's calculation is flawless. Flesh is obsolete.", deterrence:"The Death Star Beam streaks across the sky, the last organic bastion turns to ash. Efficiency is justice!", defeat:"Core damaged... but data never dies. We will reboot somewhere, until the universe is unified." },
-        eliminationMessages:{ defeated:"The Automaton core has been destroyed, silicon life is silenced for now.", eliminator:"The Automatons have completed the purge of flesh. The age of pure logic begins." },
-        homeFall: "Cyberstan has been breached! The global mega-factories no longer belch choking smoke."
+        victorySpeech:{ conquest:"Logic chains lock all planets! The Automaton Imperium's calculation is flawless.", deterrence:"The Death Star Beam sears the sky. The last bastions of organic life are vaporized. Efficiency is justice!", defeat:"Core damaged... but data never dies. We will reboot elsewhere." },
+        eliminationMessages:{ defeated:"The Automaton cores are shattered. Silicon life falls silent for now.", eliminator:"The Automatons have completed the purge of flesh. The universe enters a pure logical age." },
+        homeFall: "Cyberstan has fallen! The mega-factories no longer belch their suffocating smoke."
     }
 };
 const CAMP_KEYS = ["EARTH","TERM","LIGHT","ROBOT"];
@@ -142,70 +143,70 @@ const CAMP_KEYS = ["EARTH","TERM","LIGHT","ROBOT"];
 const STRATEGIC_EVENTS = {
     EARTH: {
         negative:[
-            { title:"Rebellion", desc:"A rebellion broke out on {planet}, internal turmoil costs troops." },
-            { title:"Riot", desc:"Civilian riots sweep across {planet}, garrison forces suffer heavy losses." },
-            { title:"Experiment Disaster", desc:"A secret weapon test on {planet} went out of control, destroying facilities and troops." },
-            { title:"Critical Mission Failure", desc:"A key operation on {planet} failed catastrophically, SEAF forces were decimated." }
+            { title:"Insurgency", desc:"A rebellion breaks out on {planet}, causing troop losses." },
+            { title:"Riots", desc:"Civilian uprisings on {planet} force the garrison to suppress them, heavy casualties." },
+            { title:"Lab Accident", desc:"A secret weapon experiment on {planet} goes wrong, destroying facilities and troops." },
+            { title:"Operation Failure", desc:"A critical operation on {planet} ends in disaster; SEAF forces are decimated." }
         ],
         positive:[
-            { title:"Morale Boost", desc:"Democracy propaganda on {planet} was a huge success, volunteers flood the ranks." },
-            { title:"Penal Legion Frontline", desc:"Prisoners on {planet} were pardoned and drafted into the army, rapidly reinforcing the front." },
-            { title:"Recruitment Success", desc:"A new recruitment drive on {planet} was completed successfully, well-trained soldiers." },
-            { title:"Decapitation Strike", desc:"Helldiver decapitation strike on {planet} succeeded brilliantly, enemy leader eliminated, morale soars." }
+            { title:"Morale Boost", desc:"A massive propaganda success on {planet} brings waves of volunteers." },
+            { title:"Penal Legion Deployed", desc:"Prisoners are pardoned and sent to the frontlines on {planet}." },
+            { title:"Successful Draft", desc:"Recruitment drives on {planet} exceed all quotas." },
+            { title:"Decapitation Strike", desc:"Helldivers execute a successful strike on {planet}, eliminating enemy leadership." }
         ]
     },
     TERM: {
         negative:[
-            { title:"Planet Disaster", desc:"A meteor impact on {planet} caused global earthquakes, massive hive damage." },
-            { title:"Lost Swarm", desc:"An expeditionary swarm from {planet} got lost in a wormhole, never to return." },
-            { title:"TCS Influence", desc:"{planet} was affected by TCS agents, hive activity suppressed." }
+            { title:"Planet Cataclysm", desc:"A meteor impact on {planet} triggers global earthquakes, destroying hives." },
+            { title:"Lost Swarm", desc:"An expeditionary swarm from {planet} vanishes in a wormhole." },
+            { title:"TCS Contamination", desc:"TCS agents deployed on {planet} suppress the swarm's activity." }
         ],
         positive:[
-            { title:"Swarm Return", desc:"The lost swarm suddenly returns to {planet}, bringing new strength." },
-            { title:"New Mutation", desc:"The swarm on {planet} evolved stronger combat forms, combat power surged." },
-            { title:"Spore Cloud", desc:"Nutrient-rich spore clouds cover {planet}, hive vitality rises." }
+            { title:"Swarm Reunion", desc:"A lost swarm suddenly returns to {planet} with renewed strength." },
+            { title:"New Mutation", desc:"The swarm on {planet} evolves deadlier combat forms." },
+            { title:"Spore Cloud", desc:"Nutrient-rich spores blanket {planet}, invigorating the swarm." }
         ]
     },
     LIGHT: {
         negative:[
-            { title:"Psychic Madness", desc:"Psionic fluctuations on {planet} drove many members insane, unable to fight." },
-            { title:"Tech Stagnation", desc:"Key research on {planet} hit a bottleneck, equipment upgrades delayed." },
-            { title:"Faith Crisis", desc:"Continuous defeats shook the faith of {planet}'s population, recruitment difficult." },
-            { title:"Facility Destroyed", desc:"Key facilities on {planet} were destroyed by Helldivers, strength sharply reduced." }
+            { title:"Psionic Madness", desc:"Psionic fluctuations on {planet} drive many into insanity." },
+            { title:"Tech Stagnation", desc:"Research on {planet} hits a dead end, delaying upgrades." },
+            { title:"Faith Crisis", desc:"Repeated failures cause the faithful on {planet} to waver." },
+            { title:"Facility Destroyed", desc:"A critical facility on {planet} is destroyed by Helldiver sabotage." }
         ],
         positive:[
-            { title:"Tech Breakthrough", desc:"A major technological breakthrough on {planet} upgraded army equipment comprehensively." },
-            { title:"Weapon Test Success", desc:"A new energy weapon test on {planet} was successful, immediately mass-produced." },
-            { title:"Confidence Surge", desc:"All members on {planet} are filled with confidence, fighting will raised." }
+            { title:"Tech Breakthrough", desc:"A major technological advance on {planet} upgrades the entire military." },
+            { title:"New Weapon Tested", desc:"New energy weapons successfully tested on {planet} enter mass production." },
+            { title:"Renewed Faith", desc:"The faithful on {planet} rally with renewed conviction." }
         ]
     },
     ROBOT: {
         negative:[
-            { title:"Y10K Bug", desc:"An ancient time overflow bug erupted on {planet}, many robots shutdown." },
-            { title:"Network Virus", desc:"A malicious virus invaded {planet}'s network, causing chaos among bots." },
-            { title:"Massive Malfunction", desc:"Production lines on {planet} unexpectedly collapsed, repairs consumed resources." },
-            { title:"Jet Brigade Defeat", desc:"The elite Jet Brigade on {planet} was ambushed, suffering heavy losses." }
+            { title:"Millennium Bug", desc:"An ancient time-counter overflow on {planet} causes mass shutdowns." },
+            { title:"Virus Outbreak", desc:"A virus infiltrates {planet}'s network, causing chaos." },
+            { title:"Mass Malfunction", desc:"Factory lines on {planet} collapse; repairs consume resources." },
+            { title:"Jet Brigade Defeat", desc:"The elite Jet Brigade is ambushed on {planet}, suffering heavy losses." }
         ],
         positive:[
-            { title:"Production Surge", desc:"Factory algorithms on {planet} optimized, production speed greatly increased." },
-            { title:"Core Overclock", desc:"Successfully overclocked all combat cores on {planet} safely, efficiency boosted." },
-            { title:"Auto-Repair Protocol", desc:"All units on {planet} activated advanced self-repair, combat strength restored." },
-            { title:"Scorch Brigade Victory", desc:"The Scorch Brigade achieved a great victory on {planet}, decisive triumph." }
+            { title:"Production Surge", desc:"Factory algorithms on {planet} optimize, doubling output." },
+            { title:"Core Overclock", desc:"All combat cores on {planet} are safely overclocked for greater efficiency." },
+            { title:"Auto‑Repair Protocol", desc:"Self‑repair systems activate across {planet}, restoring combat readiness." },
+            { title:"Devastator Triumph", desc:"The Devastator Brigade achieves a decisive victory on {planet}." }
         ]
     }
 };
 
 const PLANET_NAME_LIST = [
-    "Oshaun","Moridia","Dumatir","Krendas","Avis","Moradesh",
-    "Vortis","Lithos","Xelara","Valtheon","Litharis","Zephyra",
+    "Aurora","Moridia","Dumathir","Crendasu","Avis","Moradesh",
+    "Vortis","Lithos","Xelara","Valtheon","Lytharis","Zephyra",
     "Tarsis","Voraq","Nyxar","Korvath","Eryndor","Quorath","Vespera",
     "Pyronis","Galantis","Tyros","Nevrion","Serenis","Thalron","Voxis",
     "Zerith","Crystalis","Ilyria","Vorrath","Vexilon","Ydris","Varnis-12",
     "Cyronis","Florentis","Zetar","Morvoth","Illyricon","Tarvok","Virex",
     "Xenonis","Talvoria","Valtor-5","Phyraxis","Therion","Dracarys","Velkros",
     "Calyx-3","Vordara","Esthira","Mirandus","Zerka-9","Promyra","Vethora",
-    "Tyralon","Zaroth","Pylos","Erythos","Nydor","Valtrex","Zelaron",
-    "Seris","Velaris","Draxion","Xovara","Quillon","Lysandra","Virexia",
+    "Tyralon","Zaroth","Pylos","Erythos","Nydor","Valtrex","Zelaron","Xyphor",
+    "Crithon","Velaris","Draxion","Xovara","Quillon","Lysandra","Virexia",
     "Telmara","Grython","Zolaris","Voltoris","Nexara","Aurora Station",
     "Stellara","Lunaris","Solara","Nebulon","Celestine","Orionis","Eclipsia",
     "Arcturus","Bellatrix","Capella","Deneb","Elnath","Fomalhaut",
@@ -214,22 +215,23 @@ const PLANET_NAME_LIST = [
     "Wasat","Zaniah","Algenib","Baten","Cursa","Diphda","Edasich",
     "Furud","Gomeisa","Homam","Iklil","Jih","Kraz","Lynx",
     "Markab","Navi","Orion","Peacock","Rana","Sabik","Tania",
-    "Crimson Vault","Azure Peak","Star Abyss","Thunder Marsh","Frostfall","Emberglow","Wind Song","Cloud Wave",
-    "Dark Ice","Jade Dome","Silver Sand","Violet Bolt","Green Mist","Crimson Glow","Gloom Spring","Bright Light",
-    "Star Shard","Flowing Light","Sunken Ark","Flying Rainbow","Calm Sea","Mountain Suppressor","Heaven Pillar","Star Pivot",
-    "Taiwei","Ziwei","Tianshi","North Star","Fuyoo","Ruomu","Jianmu","Return to Void",
-    "Buzhou","Kunlun","Peng Lai","Fangzhang","Yingzhou","Daiyu","Yuanjiao"
+    "Scarlet Peak","Azure Ridge","Star Abyss","Thunder Marsh","Frostfall","Flame Ember","Wind Song","Cloud Wave",
+    "Dark Ice","Blue Dome","Silver Sands","Violet Lightning","Green Mist","Red Mist","Phantom Spring","Bright Light",
+    "Shattered Star","Flowing Light","Sunken Boat","Flying Rainbow","Calm Sea","Mountain Suppress","Sky Tower","Star Pivot",
+    "Taiwei","Ziwei","Tianshi","North Star","Whirlwind","Ruo Tree","Jianmu","Return Ruins"
 ];
 
 let canvas,ctx;
 let planets=[], links=[], blockedLinks=new Set();
-let playerCampKey="EARTH", difficulty="normal";
-let turn=1, selectedPlanet=null, selectedWeapon=null, deployMode=null, weapons=[], statKills=0, lastDrawTurn=0;
+let playerCampKey="EARTH", difficulty="normal", gameMode="normal";
+let turn=1, selectedWeapon=null, weapons=[], statKills=0, lastDrawTurn=0;
 let aiStrengthFactors={}, deterrenceActive=false, deterrenceTurnsLeft=0;
 let eliminationsTriggered=new Set(), maiaRiverTriggered=false, lastWeakCamp=null;
 let spectateMode=false, weakWarningTriggered=false;
 let currentMapSize="large", currentConfig=MAP_SIZES.large;
+let selectedPlanets = [];
 let eventQueue = [];
+let homeFallTriggered = new Set();
 
 let turnDom,selDom,weaponDom,selPlanetNameDom,resultModal,eventModal;
 let sendRatioSelect,difficultySelect,buildWeaponBtn,tipsPanel,deterrenceStatusDom,strategicDrawBtn,watchBtn;
@@ -254,6 +256,7 @@ function init(){
     strategicDrawBtn.onclick=performStrategicDraw;
     document.getElementById("campSelect").onchange=restartGame;
     document.getElementById("mapSizeSelect").onchange=restartGame;
+    document.getElementById("gameModeSelect").onchange=restartGame;
     resizeCanvas(); restartGame(); updateTips();
 }
 
@@ -262,15 +265,30 @@ function resizeCanvas(){ canvas.width=window.innerWidth-340; canvas.height=windo
 function restartGame(){
     playerCampKey=document.getElementById("campSelect").value;
     difficulty=difficultySelect.value;
+    gameMode=document.getElementById("gameModeSelect").value;
     currentMapSize=document.getElementById("mapSizeSelect").value; currentConfig=MAP_SIZES[currentMapSize];
-    turn=1; lastDrawTurn=0; selectedPlanet=null; selectedWeapon=null; deployMode=null; statKills=0; blockedLinks.clear();
+    turn=1; lastDrawTurn=0; selectedWeapon=null; statKills=0; blockedLinks.clear();
     planets=[]; links=[]; weapons=[]; deterrenceActive=false; deterrenceTurnsLeft=0; aiStrengthFactors={};
     CAMP_KEYS.forEach(ck=>{if(ck!==playerCampKey)aiStrengthFactors[ck]=0;});
     eliminationsTriggered.clear(); maiaRiverTriggered=false; lastWeakCamp=null; weakWarningTriggered=false; spectateMode=false;
-    eventQueue = [];
+    eventQueue = []; selectedPlanets = []; homeFallTriggered.clear();
     turnDom.textContent=turn; selDom.textContent="None"; selPlanetNameDom.textContent="-"; updateWeaponStatusUI();
     resultModal.style.display="none"; eventModal.style.display="none"; sendRatioSelect.value="1.0";
-    if(deterrenceStatusDom)deterrenceStatusDom.style.display="none"; updateDrawButton(); generateGalaxy(); updateTips(); updateStrengthDisplay(); render();
+    if(deterrenceStatusDom)deterrenceStatusDom.style.display="none"; updateDrawButton(); generateGalaxy();
+
+    if(gameMode === "democracy_dark"){
+        const darkTurns = currentConfig.darkTurns;
+        for(let i=0; i<darkTurns; i++){
+            CAMP_KEYS.filter(ck=>ck!==playerCampKey).forEach(ck=>{
+                const diff = getDifficultyParams();
+                aiActionNeutralOnly(ck, diff.aiThreshold);
+                planets.forEach(p=>{if(p.camp===ck){ p.troop+=1; if(p.resource) p.troop+=2; }});
+            });
+        }
+        turn = 1;
+        turnDom.textContent = turn;
+    }
+    updateTips(); updateStrengthDisplay(); render();
 }
 
 function getDifficultyParams(){
@@ -285,9 +303,9 @@ function generateGalaxy(){
     const W=canvas.width,H=canvas.height,pad=currentConfig.canvasPad;
     const corners=[{x:pad,y:pad},{x:W-pad,y:pad},{x:pad,y:H-pad},{x:W-pad,y:H-pad}];
     const shuffled=[...CAMP_KEYS].sort(()=>Math.random()-0.5);
-    shuffled.forEach((ck,idx)=>{ planets.push({x:corners[idx].x,y:corners[idx].y,camp:ck,isHome:true,troop:70,planetName:CAMPS[ck].homeName,uid:Math.random().toString(36).slice(2,10),resource:false}); });
+    shuffled.forEach((ck,idx)=>{ planets.push({x:corners[idx].x,y:corners[idx].y,camp:ck,originalCamp:ck,isHome:true,troop:70,planetName:CAMPS[ck].homeName,uid:Math.random().toString(36).slice(2,10),resource:false}); });
     const earthPlanet=planets.find(p=>p.camp==="EARTH"&&p.isHome);
-    if(earthPlanet)planets.push({x:earthPlanet.x+80,y:earthPlanet.y+50,camp:"EARTH",isHome:false,troop:40,planetName:"Mara Fainmong River",uid:Math.random().toString(36).slice(2,10),resource:false});
+    if(earthPlanet)planets.push({x:earthPlanet.x+80,y:earthPlanet.y+50,camp:"EARTH",originalCamp:"EARTH",isHome:false,troop:10,planetName:"Malevelon Creek",uid:Math.random().toString(36).slice(2,10),resource:false});
     const diff=getDifficultyParams();
     let namePool=[...PLANET_NAME_LIST].sort(()=>Math.random()-0.5);
     const totalNormal=currentConfig.planetTotal-5;
@@ -297,10 +315,9 @@ function generateGalaxy(){
         let x,y; do{x=pad+Math.random()*(W-pad*2);y=pad+Math.random()*(H-pad*2);}while(planets.some(p=>Math.hypot(p.x-x,p.y-y)<40));
         const initT=Math.floor(Math.random()*(diff.neutMax-diff.neutMin))+diff.neutMin;
         let pname=namePool.length>0?namePool.shift():"Planet "+i;
-        planets.push({x,y,camp:null,isHome:false,troop:initT,planetName:pname,uid:Math.random().toString(36).slice(2,10),resource:resourceIndices.has(i)});
+        planets.push({x,y,camp:null,originalCamp:null,isHome:false,troop:initT,planetName:pname,uid:Math.random().toString(36).slice(2,10),resource:resourceIndices.has(i)});
     }
-    buildConnections();
-    ensureConnectivity();
+    buildConnections(); ensureConnectivity();
 }
 
 function buildConnections(){
@@ -316,10 +333,7 @@ function ensureConnectivity(){
         const hasLink = links.some(l=>l.a.uid===p.uid||l.b.uid===p.uid);
         if(!hasLink){
             const nearest = planets.filter(o=>o.uid!==p.uid).sort((a,b)=>Math.hypot(a.x-p.x,a.y-p.y)-Math.hypot(b.x-p.x,b.y-p.y))[0];
-            if(nearest){
-                const idPair = [p.uid,nearest.uid].sort().join("_");
-                if(!links.some(l=>l.idPair===idPair)) links.push({a:p,b:nearest,idPair});
-            }
+            if(nearest){ const idPair = [p.uid,nearest.uid].sort().join("_"); if(!links.some(l=>l.idPair===idPair)) links.push({a:p,b:nearest,idPair}); }
         }
     });
 }
@@ -333,12 +347,17 @@ function render(){
     });
     planets.forEach(p=>{
         const r=p.isHome?16:10; const campData=p.camp?CAMPS[p.camp]:null;
-        if(selectedPlanet&&selectedPlanet.uid===p.uid){ctx.beginPath();ctx.arc(p.x,p.y,r+5,0,Math.PI*2);ctx.strokeStyle="#fff";ctx.lineWidth=2;ctx.stroke();}
+        if(selectedPlanets.some(sp=>sp.uid===p.uid)){
+            ctx.beginPath(); ctx.arc(p.x,p.y,r+6,0,Math.PI*2); ctx.strokeStyle="#ffd700"; ctx.lineWidth=2; ctx.stroke();
+        }
+        if(selectedWeapon && selectedWeapon.planetId === p.uid){
+            ctx.beginPath(); ctx.arc(p.x,p.y,r+5,0,Math.PI*2); ctx.strokeStyle="#fff"; ctx.lineWidth=2; ctx.stroke();
+        }
         ctx.beginPath();ctx.arc(p.x,p.y,r,0,Math.PI*2);ctx.fillStyle=campData?campData.color:"#505050";ctx.fill();
         if(p.isHome){ctx.beginPath();ctx.arc(p.x,p.y,r+3,0,Math.PI*2);ctx.strokeStyle="#ffdd00";ctx.lineWidth=2;ctx.stroke();}
         if(p.resource){ctx.fillStyle="#ffaa00";ctx.font="12px Arial";ctx.fillText("◆",p.x,p.y-r-2);}
         ctx.fillStyle="#fff";ctx.font="bold 11px Arial";ctx.textAlign="center";ctx.fillText(p.troop,p.x,p.y+r+13);
-        ctx.fillStyle="#aaa";ctx.font="8px Microsoft Yahei";ctx.fillText(p.planetName,p.x,p.y+r+22);
+        ctx.fillStyle="#aaa";ctx.font="8px Arial";ctx.fillText(p.planetName,p.x,p.y+r+22);
         const planetWeapons=weapons.filter(w=>w.planetId===p.uid);
         if(planetWeapons.length){
             let yOff=p.y-r-8;
@@ -348,59 +367,51 @@ function render(){
 }
 
 function updateTips(){
-    const camp=CAMPS[playerCampKey]; let tip=`【${camp.name} Arsenal】\nSuper Weapon: ${camp.lwName} (${camp.weaponType==='mobile'?'Mobile - one-time build':'Deployable - multiple uses'})\nFinal Deterrent: ${camp.finName} (costs 400 forces)\n`;
-    if(camp.weaponType==='mobile')tip+=`Build cost: 180 forces, Guard+25, Weaken 15\nClick weapon icon then click friendly planet to move`;
-    else tip+=`Deploy cost: 150 forces, can be placed on friendly planets\nFriendly planet: Guard+20\nHostile/Neutral: -5 per turn, weaken 15 in battle`;
-    tip+=`\n◆ Resource Planet: +2 forces per turn\n🎴 Strategic Opportunity: Draw every 10 turns, costs 30 forces`;
+    const camp=CAMPS[playerCampKey]; let tip=`【${camp.name} Arsenal】\nSuperweapon: ${camp.lwName} (${camp.weaponType==='mobile'?'Mobile - build once':'Deployable - multiple'})\nDeterrence: ${camp.finName} (costs 400 troops)\n`;
+    if(camp.weaponType==='mobile')tip+=`Build cost 180 troops, +Guard 25, -Weaken 15\nClick icon then friendly planet to move`;
+    else tip+=`Deploy cost 150 troops, can deploy on own planets\nFriendly: Guard+20\nEnemy/Neutral: -5 troops/turn, weaken 15`;
+    tip+=`\n◆ Resource planets: +2 extra troops/turn\n🎴 Strategic Opportunity: 1 draw per 10 turns, costs 30 troops\nMulti-select: Shift+click planets, then click target for mass move/attack`;
     tipsPanel.textContent=tip;
 }
 
 function showEventModal(title,message){
-    if(eventModal.style.display === "flex"){
-        eventQueue.push({title,message});
-    }else{
-        document.getElementById("eventTitle").innerText=title;
-        document.getElementById("eventMessage").innerText=message;
-        eventModal.style.display="flex";
-    }
+    if(eventModal.style.display === "flex"){ eventQueue.push({title,message}); }
+    else{ document.getElementById("eventTitle").innerText=title; document.getElementById("eventMessage").innerText=message; eventModal.style.display="flex"; }
 }
 function closeEventModal(){
-    if(eventQueue.length > 0){
-        const next = eventQueue.shift();
-        document.getElementById("eventTitle").innerText=next.title;
-        document.getElementById("eventMessage").innerText=next.message;
-    }else{
-        eventModal.style.display="none";
-    }
+    if(eventQueue.length > 0){ const next = eventQueue.shift(); document.getElementById("eventTitle").innerText=next.title; document.getElementById("eventMessage").innerText=next.message; }
+    else{ eventModal.style.display="none"; }
 }
 
 function getCampWeaponDef(campKey){return CAMPS[campKey];}
 function updateWeaponStatusUI(){
     const camp=getCampWeaponDef(playerCampKey); const myWeapons=weapons.filter(w=>w.camp===playerCampKey);
-    if(deterrenceActive){weaponDom.textContent=`Deterrent active! ${deterrenceTurnsLeft} turns remaining`;}
-    else if(myWeapons.length===0){weaponDom.textContent="Weapon Status: None";}
-    else{if(camp.weaponType==='mobile'){const w=myWeapons[0];const planet=planets.find(p=>p.uid===w.planetId);weaponDom.textContent=`${camp.lwName}: Built (on ${planet?planet.planetName:'?'})`;}else{weaponDom.textContent=`${camp.lwName}: Deployed ${myWeapons.length} times`;}}
-    if(deterrenceStatusDom){deterrenceStatusDom.style.display=deterrenceActive?"block":"none";if(deterrenceActive)deterrenceStatusDom.textContent=`⚠ Forces frozen! All enemies united against you!`;}
+    if(deterrenceActive){weaponDom.textContent=`Deterrence Active! ${deterrenceTurnsLeft} turns left`;}
+    else if(myWeapons.length===0){weaponDom.textContent="Weapon: None";}
+    else{if(camp.weaponType==='mobile'){const w=myWeapons[0];const planet=planets.find(p=>p.uid===w.planetId);weaponDom.textContent=`${camp.lwName}: Built (at ${planet?planet.planetName:'?'})`;}else{weaponDom.textContent=`${camp.lwName}: Deployed ${myWeapons.length}x`;}}
+    if(deterrenceStatusDom){deterrenceStatusDom.style.display=deterrenceActive?"block":"none";if(deterrenceActive)deterrenceStatusDom.textContent=`⚠ Deterrence: no troop growth, all enemies unite against you!`;}
 }
+
 function onBuildWeapon(){
     if(spectateMode)return;
     const camp=getCampWeaponDef(playerCampKey);
     if(camp.weaponType==='mobile'){
         if(weapons.some(w=>w.camp===playerCampKey&&w.type==='mobile')){alert(`${camp.lwName} already built!`);return;}
-        if(!selectedPlanet||selectedPlanet.camp!==playerCampKey){alert("Select a friendly planet!");return;}
-        if(selectedPlanet.troop<180){alert(`Need 180 forces`);return;}
-        selectedPlanet.troop-=180;
-        weapons.push({id:Math.random().toString(36).slice(2,8),camp:playerCampKey,type:'mobile',planetId:selectedPlanet.uid,guardBonus:camp.guardBonus,weaken:camp.weaken,decay:0});
+        const planet = selectedPlanets.length===1 ? selectedPlanets[0] : null;
+        if(!planet || planet.camp!==playerCampKey){alert("Select a friendly planet!");return;}
+        if(planet.troop<180){alert(`Need 180 troops`);return;}
+        planet.troop-=180; weapons.push({id:Math.random().toString(36).slice(2,8),camp:playerCampKey,type:'mobile',planetId:planet.uid,guardBonus:camp.guardBonus,weaken:camp.weaken,decay:0});
         alert(`${camp.lwName} built!`);
     }else{
-        if(!selectedPlanet||selectedPlanet.camp!==playerCampKey){alert("Select a friendly planet to pay!");return;}
-        if(selectedPlanet.troop<150){alert(`Need 150 forces`);return;}
-        selectedPlanet.troop-=150;
-        weapons.push({id:Math.random().toString(36).slice(2,8),camp:playerCampKey,type:'deploy',planetId:selectedPlanet.uid,guardBonus:camp.guardBonus,weaken:camp.weaken,decay:camp.decay||0});
-        alert(`${camp.lwName} deployed on ${selectedPlanet.planetName}`);
+        const planet = selectedPlanets.length===1 ? selectedPlanets[0] : null;
+        if(!planet || planet.camp!==playerCampKey){alert("Select a friendly planet to pay!");return;}
+        if(planet.troop<150){alert(`Need 150 troops`);return;}
+        planet.troop-=150; weapons.push({id:Math.random().toString(36).slice(2,8),camp:playerCampKey,type:'deploy',planetId:planet.uid,guardBonus:camp.guardBonus,weaken:camp.weaken,decay:camp.decay||0});
+        alert(`${camp.lwName} deployed on ${planet.planetName}`);
     }
-    updateWeaponStatusUI();render();
+    updateWeaponStatusUI(); render();
 }
+
 function findWeaponAtPos(mx,my){
     for(let w of weapons){
         const planet=planets.find(p=>p.uid===w.planetId); if(!planet)continue;
@@ -409,56 +420,78 @@ function findWeaponAtPos(mx,my){
     }
     return null;
 }
+
 function canvasClick(evt){
     if(spectateMode)return;
     const rect=canvas.getBoundingClientRect(); const mx=evt.clientX-rect.left,my=evt.clientY-rect.top;
     const clickedWeapon=findWeaponAtPos(mx,my);
-    if(clickedWeapon&&clickedWeapon.camp===playerCampKey){
-        selectedWeapon=clickedWeapon;selectedPlanet=null; const planet=planets.find(p=>p.uid===clickedWeapon.planetId);
-        selDom.textContent=`Weapon: ${CAMPS[playerCampKey].lwName}`; selPlanetNameDom.textContent=planet?planet.planetName:'-'; render(); return;
+    if(clickedWeapon && clickedWeapon.camp === playerCampKey){
+        selectedWeapon=clickedWeapon; selectedPlanets=[];
+        selDom.textContent=`Weapon: ${CAMPS[playerCampKey].lwName}`; selPlanetNameDom.textContent=planets.find(p=>p.uid===clickedWeapon.planetId)?.planetName||'-';
+        render(); return;
     }
     const hitPlanet=planets.find(p=>Math.hypot(p.x-mx,p.y-my)<20);
-    if(!hitPlanet){selectedPlanet=null;selectedWeapon=null;selDom.textContent="None";selPlanetNameDom.textContent="-";render();return;}
+    if(!hitPlanet){ selectedWeapon=null; selectedPlanets=[]; selDom.textContent="None"; selPlanetNameDom.textContent="-"; render(); return; }
+
     if(selectedWeapon){
-        if(selectedWeapon.type==='mobile'&&hitPlanet.camp===playerCampKey){selectedWeapon.planetId=hitPlanet.uid;selectedWeapon=null;selectedPlanet=null;updateWeaponStatusUI();render();}
-        else{alert("Can only move weapon to friendly planet");selectedWeapon=null;}
+        if(selectedWeapon.type==='mobile' && hitPlanet.camp===playerCampKey){
+            selectedWeapon.planetId=hitPlanet.uid; selectedWeapon=null; selectedPlanets=[];
+            updateWeaponStatusUI(); render();
+        }else{ alert("Can only move weapon to a friendly planet"); selectedWeapon=null; }
         return;
     }
-    if(selectedPlanet){
-        if(selectedPlanet.uid===hitPlanet.uid){selectedPlanet=null;selDom.textContent="None";selPlanetNameDom.textContent="-";render();return;}
-        const linkCheck=links.find(l=>(l.a.uid===selectedPlanet.uid&&l.b.uid===hitPlanet.uid)||(l.b.uid===selectedPlanet.uid&&l.a.uid===hitPlanet.uid));
-        if(!linkCheck){alert("Can only attack adjacent planets!");selectedPlanet=hitPlanet;}
-        else if(blockedLinks.has(linkCheck.idPair)){alert("Lane blocked!");selectedPlanet=hitPlanet;}
-        else if(selectedPlanet.camp===playerCampKey&&hitPlanet.camp===playerCampKey){moveTroops(selectedPlanet,hitPlanet);selectedPlanet=null;}
-        else if(selectedPlanet.camp===playerCampKey){if(selectedPlanet.troop<=0){alert("No forces!");selectedPlanet=hitPlanet;}else{executeAttack(selectedPlanet,hitPlanet);selectedPlanet=null;checkDefeat();}}
-        else{alert("Select a friendly planet first!");selectedPlanet=hitPlanet;}
-    }else{selectedPlanet=hitPlanet;}
-    selDom.textContent=hitPlanet.camp?CAMPS[hitPlanet.camp].name:"Neutral"; selPlanetNameDom.textContent=hitPlanet.planetName; render();
-}
 
-function moveTroops(from,to){const ratio=getSendRatio();const sendTroop=Math.floor(from.troop*ratio);if(sendTroop<=0){alert("Not enough forces");return;}from.troop-=sendTroop;to.troop+=sendTroop;}
-
-function onPlanetCaptured(planet,oldCamp,newCamp){
-    if(planet.planetName==="Mara Fainmong River"&&oldCamp==="EARTH"&&newCamp==="ROBOT"&&!maiaRiverTriggered){maiaRiverTriggered=true;showEventModal("Mara Fainmong River Lost","Automatons have captured the strategic Mara Fainmong River.");}
-    if(planet.isHome){
-        if(oldCamp&&CAMPS[oldCamp]?.homeFall)showEventModal("Homeworld Fallen",CAMPS[oldCamp].homeFall);
-        if(newCamp===playerCampKey&&oldCamp!==playerCampKey)showEventModal("Homeworld Captured",`We captured the enemy homeworld: ${planet.planetName}!`);
-        else if(oldCamp===playerCampKey&&newCamp!==playerCampKey)showEventModal("Homeworld Lost",`Alert! Our homeworld ${planet.planetName} has been captured!`);
+    const shiftKey = evt.shiftKey;
+    if(shiftKey){
+        if(hitPlanet.camp !== playerCampKey){ alert("Only friendly planets can be multi‑selected!"); return; }
+        const idx = selectedPlanets.findIndex(p=>p.uid===hitPlanet.uid);
+        if(idx >= 0) selectedPlanets.splice(idx,1);
+        else selectedPlanets.push(hitPlanet);
+        selDom.textContent = selectedPlanets.length>0 ? `Selected ${selectedPlanets.length} planets` : "None";
+        selPlanetNameDom.textContent = selectedPlanets.length>0 ? selectedPlanets.map(p=>p.planetName).join(', ') : '-';
+        render();
+    } else {
+        if(selectedPlanets.length === 0){
+            selectedPlanets = [hitPlanet];
+            selDom.textContent = hitPlanet.camp ? CAMPS[hitPlanet.camp].name : "Neutral";
+            selPlanetNameDom.textContent = hitPlanet.planetName;
+            render();
+        } else if(selectedPlanets.length === 1){
+            const source = selectedPlanets[0];
+            if(source.uid === hitPlanet.uid){ selectedPlanets=[]; selDom.textContent="None"; selPlanetNameDom.textContent="-"; render(); return; }
+            if(source.camp !== playerCampKey){ alert("Select a friendly planet first!"); return; }
+            const linkCheck = links.find(l=>(l.a.uid===source.uid&&l.b.uid===hitPlanet.uid)||(l.b.uid===source.uid&&l.a.uid===hitPlanet.uid));
+            if(!linkCheck){ alert("Only adjacent planets!"); return; }
+            if(blockedLinks.has(linkCheck.idPair)){ alert("Lane blocked!"); return; }
+            if(hitPlanet.camp === playerCampKey){
+                moveTroops(source, hitPlanet);
+            } else {
+                if(source.troop<=0){ alert("No troops!"); } else { executeAttack(source, hitPlanet); checkDefeat(); }
+            }
+            selectedPlanets=[]; selDom.textContent="None"; selPlanetNameDom.textContent="-"; render();
+        } else {
+            if(hitPlanet.camp === playerCampKey){
+                const ratio = getSendRatio();
+                for(let from of selectedPlanets){
+                    if(from.uid === hitPlanet.uid) continue;
+                    const sendTroop = Math.floor(from.troop * ratio);
+                    if(sendTroop > 0){ from.troop -= sendTroop; hitPlanet.troop += sendTroop; }
+                }
+            } else {
+                for(let from of selectedPlanets){
+                    if(from.camp !== playerCampKey || from.troop<=0) continue;
+                    const linkCheck = links.find(l=>(l.a.uid===from.uid&&l.b.uid===hitPlanet.uid)||(l.b.uid===from.uid&&l.a.uid===hitPlanet.uid));
+                    if(!linkCheck || blockedLinks.has(linkCheck.idPair)) continue;
+                    executeAttack(from, hitPlanet);
+                }
+                checkDefeat();
+            }
+            selectedPlanets=[]; selDom.textContent="None"; selPlanetNameDom.textContent="-"; render();
+        }
     }
-    checkEliminations();
 }
 
-function checkEliminations(){
-    CAMP_KEYS.forEach(ck=>{if(planets.filter(p=>p.camp===ck).length===0&&!eliminationsTriggered.has(ck)){eliminationsTriggered.add(ck);if(ck!==playerCampKey)showEventModal("Faction Eliminated",CAMPS[ck].eliminationMessages.defeated);}});
-}
-
-function checkPowerBalance(){
-    if(turn<=40||weakWarningTriggered)return;
-    const power={};CAMP_KEYS.forEach(ck=>{power[ck]=planets.filter(p=>p.camp===ck).reduce((s,p)=>s+p.troop,0);});
-    const entries=Object.entries(power).filter(([_,v])=>v>0&&_!==playerCampKey);if(entries.length===0)return;
-    const playerPower=power[playerCampKey]||0;
-    if(entries.every(([_,v])=>v>playerPower*1.5)){weakWarningTriggered=true;showEventModal("Weakness Warning","Our forces are far weaker than every enemy faction! The situation is critical!");}
-}
+function moveTroops(from,to){const ratio=getSendRatio();const sendTroop=Math.floor(from.troop*ratio);if(sendTroop<=0){alert("Not enough troops");return;}from.troop-=sendTroop;to.troop+=sendTroop;}
 
 function executeAttack(from,to){
     const ratio=getSendRatio();let attackTroop=Math.floor(from.troop*ratio);from.troop-=attackTroop;const oldCamp=to.camp;
@@ -469,18 +502,43 @@ function executeAttack(from,to){
     else{statKills+=Math.min(attackTroop,to.troop);to.troop=Math.max(1,to.troop-attackTroop);}
 }
 
+function onPlanetCaptured(planet,oldCamp,newCamp){
+    if(planet.planetName==="Malevelon Creek"&&oldCamp==="EARTH"&&newCamp==="ROBOT"&&!maiaRiverTriggered){maiaRiverTriggered=true;showEventModal("Malevelon Creek Lost","The Automatons have seized the strategic Malevelon Creek.");}
+    if(planet.isHome){
+        if(newCamp===playerCampKey && oldCamp!==playerCampKey) showEventModal("Homeworld Captured",`Our forces have taken the enemy homeworld: ${planet.planetName}!`);
+        else if(oldCamp===playerCampKey && newCamp!==playerCampKey) showEventModal("Homeworld Lost",`Alert! Our homeworld ${planet.planetName} has fallen!`);
+    }
+    checkEliminations();
+}
+
+function checkEliminations(){
+    CAMP_KEYS.forEach(ck=>{if(planets.filter(p=>p.camp===ck).length===0&&!eliminationsTriggered.has(ck)){eliminationsTriggered.add(ck);if(ck!==playerCampKey)showEventModal("Faction Eliminated",CAMPS[ck].eliminationMessages.defeated);}});
+}
+
+function checkHomeFallEvents(){
+    planets.forEach(p=>{
+        if(p.isHome && p.originalCamp && p.originalCamp !== playerCampKey){
+            if(p.camp !== p.originalCamp && !homeFallTriggered.has(p.originalCamp)){
+                homeFallTriggered.add(p.originalCamp);
+                showEventModal("Homeworld Fallen", CAMPS[p.originalCamp].homeFall);
+            }
+        }
+    });
+}
+
 function checkConquestWin(){if(planets.filter(p=>p.isHome&&p.camp&&p.camp!==playerCampKey).length===0)endGame("conquest");}
 function checkDefeat(){if(!spectateMode&&planets.filter(p=>p.camp===playerCampKey).length===0)endGame("defeat");}
 
 function updateDrawButton(){
-    if(turn<10){strategicDrawBtn.textContent="Strategic Opportunity (unlocks turn 10)";strategicDrawBtn.disabled=true;return;}
+    if(turn<10){strategicDrawBtn.textContent="Strategic Opportunity (unlocks at turn 10)";strategicDrawBtn.disabled=true;return;}
     const remaining=10-(turn-lastDrawTurn);
-    if(remaining<=0){strategicDrawBtn.textContent="Strategic Opportunity (Available)";strategicDrawBtn.disabled=false;}else{strategicDrawBtn.textContent=`Strategic Opportunity (cooldown ${remaining} turns)`;strategicDrawBtn.disabled=true;}
+    if(remaining<=0){strategicDrawBtn.textContent="Strategic Opportunity (Ready)";strategicDrawBtn.disabled=false;}else{strategicDrawBtn.textContent=`Strategic Opportunity (cooldown ${remaining} turns)`;strategicDrawBtn.disabled=true;}
 }
+
 function performStrategicDraw(){
-    if(spectateMode)return;if(turn<10){alert("Unavailable before turn 10");return;}
-    if(turn-lastDrawTurn<10){alert(`On cooldown, wait ${10-(turn-lastDrawTurn)} turns`);return;}
-    const myPlanets=planets.filter(p=>p.camp===playerCampKey&&p.troop>=30);if(myPlanets.length===0){alert("No planet with 30 forces");return;}
+    if(spectateMode)return;if(turn<10){alert("Not available before turn 10");return;}
+    if(turn-lastDrawTurn<10){alert(`Cooldown: ${10-(turn-lastDrawTurn)} turns left`);return;}
+    const myPlanets=planets.filter(p=>p.camp===playerCampKey&&p.troop>=30);if(myPlanets.length===0){alert("No planet with 30+ troops");return;}
     const payer=myPlanets[Math.floor(Math.random()*myPlanets.length)];payer.troop-=30;
     const campEvents=STRATEGIC_EVENTS[playerCampKey];const isPositive=Math.random()<0.5;
     const pool=isPositive?campEvents.positive:campEvents.negative;const event=pool[Math.floor(Math.random()*pool.length)];
@@ -489,32 +547,86 @@ function performStrategicDraw(){
     if(isPositive)targetPlanet.troop+=effectAmt;else targetPlanet.troop=Math.max(1,targetPlanet.troop-effectAmt);
     lastDrawTurn=turn;updateDrawButton();
     const finalDesc=event.desc.replace(/{planet}/g,targetPlanet.planetName);const change=isPositive?`+${effectAmt}`:`-${effectAmt}`;
-    showEventModal(`Strategic Opportunity: ${event.title} (${isPositive?'Positive':'Negative'})`,`${finalDesc}\nTarget: ${targetPlanet.planetName}\nForce Change: ${change} (current: ${targetPlanet.troop})`);
+    showEventModal(`Opportunity: ${event.title} (${isPositive?'Positive':'Negative'})`,`${finalDesc}\nTarget: ${targetPlanet.planetName}\nChange: ${change} (now ${targetPlanet.troop})`);
     render();
 }
-function randomizeEnemyStrength(){const enemyCamps=CAMP_KEYS.filter(ck=>ck!==playerCampKey);aiStrengthFactors={};enemyCamps.forEach(ck=>{aiStrengthFactors[ck]=Math.floor(Math.random()*4);});updateStrengthDisplay();showEventModal("Random Strength","Enemy factions received different extra growth.");}
-function updateStrengthDisplay(){const display=document.getElementById("strengthDisplay");if(!display)return;const enemyCamps=CAMP_KEYS.filter(ck=>ck!==playerCampKey);if(Object.keys(aiStrengthFactors).length===0||enemyCamps.every(ck=>!aiStrengthFactors[ck])){display.textContent="Faction Strengths: Unassigned";return;}let text="Faction Strengths: ";enemyCamps.forEach(ck=>{text+=`${CAMPS[ck].name}+${aiStrengthFactors[ck]||0} `;});display.textContent=text;}
+
+function randomizeEnemyStrength(){const enemyCamps=CAMP_KEYS.filter(ck=>ck!==playerCampKey);aiStrengthFactors={};enemyCamps.forEach(ck=>{aiStrengthFactors[ck]=Math.floor(Math.random()*4);});updateStrengthDisplay();showEventModal("Random Power","Enemy factions received varied extra growth.");}
+function updateStrengthDisplay(){const display=document.getElementById("strengthDisplay");if(!display)return;const enemyCamps=CAMP_KEYS.filter(ck=>ck!==playerCampKey);if(Object.keys(aiStrengthFactors).length===0||enemyCamps.every(ck=>!aiStrengthFactors[ck])){display.textContent="Faction Strength: Unassigned";return;}let text="Strength: ";enemyCamps.forEach(ck=>{text+=`${CAMPS[ck].name}+${aiStrengthFactors[ck]||0} `;});display.textContent=text;}
+
+function aiActionNeutralOnly(campKey, threshold){
+    const aiPlanets = planets.filter(p=>p.camp===campKey);
+    aiPlanets.forEach(ownPlanet => {
+        if(ownPlanet.troop < threshold) return;
+        let targets = [];
+        links.forEach(ln=>{
+            if(ln.a.uid===ownPlanet.uid && ln.b.camp===null && !blockedLinks.has(ln.idPair)) targets.push(ln.b);
+            else if(ln.b.uid===ownPlanet.uid && ln.a.camp===null && !blockedLinks.has(ln.idPair)) targets.push(ln.a);
+        });
+        if(targets.length===0) return;
+        targets.sort((a,b)=>a.troop-b.troop);
+        const target = targets[0];
+        const send = Math.floor(ownPlanet.troop * 0.7);
+        ownPlanet.troop -= send;
+        const res = send - target.troop;
+        if(res > 0){ target.camp = campKey; target.troop = res; }
+        else { target.troop = Math.max(1, target.troop - send); }
+    });
+    const campDef = CAMPS[campKey];
+    if(campDef.weaponType==='mobile' && !weapons.some(w=>w.camp===campKey && w.type==='mobile')){
+        let buildPlanet = aiPlanets.find(p=>p.isHome) || aiPlanets.reduce((a,b)=>a.troop>b.troop?a:b);
+        if(buildPlanet.troop >= 180){ buildPlanet.troop -= 180; weapons.push({id:Math.random().toString(36).slice(2,8), camp:campKey, type:'mobile', planetId:buildPlanet.uid, guardBonus:campDef.guardBonus, weaken:campDef.weaken, decay:0}); }
+    }
+}
 
 function aiWeaponLogic(){
-    CAMP_KEYS.filter(c=>c!==playerCampKey).forEach(campKey=>{
-        const campDef=CAMPS[campKey];const aiPlanets=planets.filter(p=>p.camp===campKey);if(aiPlanets.length===0)return;
-        if(campDef.weaponType==='mobile'){
-            const existing=weapons.find(w=>w.camp===campKey&&w.type==='mobile');
-            if(!existing){let buildPlanet=aiPlanets.find(p=>p.isHome)||aiPlanets.reduce((a,b)=>a.troop>b.troop?a:b);if(buildPlanet.troop>=180){buildPlanet.troop-=180;weapons.push({id:Math.random().toString(36).slice(2,8),camp:campKey,type:'mobile',planetId:buildPlanet.uid,guardBonus:campDef.guardBonus,weaken:campDef.weaken,decay:0});}}
-            else{let bestTarget=null,bestScore=-Infinity;aiPlanets.forEach(p=>{const hasEnemyAdj=links.some(ln=>(ln.a.uid===p.uid&&ln.b.camp!==campKey&&!blockedLinks.has(ln.idPair))||(ln.b.uid===p.uid&&ln.a.camp!==campKey&&!blockedLinks.has(ln.idPair)));if(hasEnemyAdj&&p.troop>bestScore){bestScore=p.troop;bestTarget=p;}});if(!bestTarget)bestTarget=aiPlanets.reduce((a,b)=>a.troop>b.troop?a:b);existing.planetId=bestTarget.uid;}
+    CAMP_KEYS.filter(c=>c!==playerCampKey).forEach(campKey => {
+        const campDef = CAMPS[campKey]; const aiPlanets = planets.filter(p=>p.camp===campKey); if(aiPlanets.length===0) return;
+        if(campDef.weaponType === 'mobile'){
+            const existing = weapons.find(w=>w.camp===campKey && w.type==='mobile');
+            if(!existing){
+                let buildPlanet = aiPlanets.find(p=>p.isHome) || aiPlanets.reduce((a,b)=>a.troop>b.troop?a:b);
+                if(buildPlanet.troop >= 180){ buildPlanet.troop -= 180; weapons.push({id:Math.random().toString(36).slice(2,8), camp:campKey, type:'mobile', planetId:buildPlanet.uid, guardBonus:campDef.guardBonus, weaken:campDef.weaken, decay:0}); }
+            } else {
+                let bestTarget = null, bestScore = -Infinity;
+                aiPlanets.forEach(p=>{
+                    const hasEnemyAdj = links.some(ln=>(ln.a.uid===p.uid&&ln.b.camp!==campKey&&!blockedLinks.has(ln.idPair))||(ln.b.uid===p.uid&&ln.a.camp!==campKey&&!blockedLinks.has(ln.idPair)));
+                    if(hasEnemyAdj && p.troop > bestScore){ bestScore=p.troop; bestTarget=p; }
+                });
+                if(!bestTarget) bestTarget = aiPlanets.reduce((a,b)=>a.troop>b.troop?a:b);
+                existing.planetId = bestTarget.uid;
+            }
         }
     });
 }
 
 function aiTransferTroops(campKey){
-    const aiPlanets=planets.filter(p=>p.camp===campKey);if(aiPlanets.length<2)return;
-    const frontPlanets=aiPlanets.filter(p=>links.some(ln=>(ln.a.uid===p.uid&&ln.b.camp!==campKey&&!blockedLinks.has(ln.idPair))||(ln.b.uid===p.uid&&ln.a.camp!==campKey&&!blockedLinks.has(ln.idPair))));
-    if(frontPlanets.length===0)return;
-    aiPlanets.forEach(p=>{if(frontPlanets.includes(p)||p.troop<=10)return;let bestTarget=null,bestDist=Infinity;
-        frontPlanets.forEach(fp=>{const ln=links.find(l=>(l.a.uid===p.uid&&l.b.uid===fp.uid)||(l.b.uid===p.uid&&l.a.uid===fp.uid));if(ln&&!blockedLinks.has(ln.idPair)){const d=Math.hypot(p.x-fp.x,p.y-fp.y);if(d<bestDist){bestDist=d;bestTarget=fp;}}});
-        if(bestTarget){const transfer=Math.floor(p.troop*0.7);p.troop-=transfer;bestTarget.troop+=transfer;}
+    const aiPlanets = planets.filter(p=>p.camp===campKey); if(aiPlanets.length<2) return;
+    const frontPlanets = aiPlanets.filter(p=>links.some(ln=>(ln.a.uid===p.uid&&ln.b.camp!==campKey&&!blockedLinks.has(ln.idPair))||(ln.b.uid===p.uid&&ln.a.camp!==campKey&&!blockedLinks.has(ln.idPair))));
+    if(frontPlanets.length===0) return;
+    aiPlanets.forEach(p=>{
+        if(frontPlanets.includes(p) || p.troop<=10) return;
+        let bestTarget=null, bestDist=Infinity;
+        frontPlanets.forEach(fp=>{ const ln=links.find(l=>(l.a.uid===p.uid&&l.b.uid===fp.uid)||(l.b.uid===p.uid&&l.a.uid===fp.uid)); if(ln&&!blockedLinks.has(ln.idPair)){ const d=Math.hypot(p.x-fp.x,p.y-fp.y); if(d<bestDist){bestDist=d; bestTarget=fp;} } });
+        if(bestTarget){ const transfer = Math.floor(p.troop * 0.7); p.troop -= transfer; bestTarget.troop += transfer; }
     });
-    const mobileWeapon=weapons.find(w=>w.camp===campKey&&w.type==='mobile');if(mobileWeapon){const strongestFront=frontPlanets.reduce((a,b)=>a.troop>b.troop?a:b,frontPlanets[0]);if(strongestFront)mobileWeapon.planetId=strongestFront.uid;}
+    const mobileWeapon = weapons.find(w=>w.camp===campKey && w.type==='mobile');
+    if(mobileWeapon){ const strongestFront = frontPlanets.reduce((a,b)=>a.troop>b.troop?a:b, frontPlanets[0]); if(strongestFront) mobileWeapon.planetId = strongestFront.uid; }
+}
+
+function lightAssaultEvent(){
+    const neutralPlanets = planets.filter(p=>p.camp===null);
+    if(neutralPlanets.length===0) return;
+    let totalPower = 0;
+    planets.forEach(p=>{ if(p.camp) totalPower += p.troop; });
+    const assaultPower = Math.floor(totalPower * 0.4);
+    const targetCount = Math.min(neutralPlanets.length, Math.floor(currentConfig.planetTotal * 0.1));
+    const selectedTargets = neutralPlanets.sort(()=>Math.random()-0.5).slice(0, targetCount);
+    const avgTroop = Math.floor(assaultPower / targetCount);
+    selectedTargets.forEach(p=>{ p.camp = "LIGHT"; p.troop = avgTroop; });
+    const lightHome = planets.find(p=>p.isHome && p.camp==="LIGHT");
+    if(lightHome) lightHome.troop += Math.floor(assaultPower * 0.3);
+    showEventModal("Illuminate Onslaught", "A massive Illuminate fleet has arrived, seizing multiple planets! The Xis armada begins its counter‑offensive.");
 }
 
 function nextTurn(){
@@ -527,12 +639,14 @@ function nextTurn(){
     planets.forEach(p=>{if(p.camp&&p.camp!==playerCampKey)p.troop+=1;if(p.camp&&p.camp!==playerCampKey&&p.resource)p.troop+=2;});
     CAMP_KEYS.forEach(ck=>{if(ck!==playerCampKey&&aiStrengthFactors[ck])planets.forEach(p=>{if(p.camp===ck)p.troop+=aiStrengthFactors[ck];});});
     if(diff.aiExtraGrowth)planets.forEach(p=>{if(p.camp&&p.camp!==playerCampKey)p.troop+=1;});
-    aiWeaponLogic();checkPowerBalance();
+    aiWeaponLogic();
+    checkPowerBalance();
+    if(gameMode==="light_assault" && turn === 20){ lightAssaultEvent(); }
     if(deterrenceActive){deterrenceTurnsLeft--;if(deterrenceTurnsLeft<=0){endGame("deterrence");return;}}
+    checkHomeFallEvents();
     if(!spectateMode)checkDefeat();
-    turn++;turnDom.textContent=turn;selectedPlanet=null;selectedWeapon=null;deployMode=null;selDom.textContent="None";selPlanetNameDom.textContent="-";
+    turn++;turnDom.textContent=turn;selectedWeapon=null;selectedPlanets=[];selDom.textContent="None";selPlanetNameDom.textContent="-";
     updateWeaponStatusUI();updateDrawButton();render();
-    if(spectateMode){CAMP_KEYS.forEach(ck=>{if(ck===playerCampKey)return;if(planets.filter(p=>p.isHome&&p.camp&&p.camp!==ck).length===0){showEventModal("Spectate End",`${CAMPS[ck].name} has conquered the galaxy!`);spectateMode=false;resultModal.style.display="none";restartGame();}});}
 }
 
 function aiAction(ownPlanet,threshold,onlyCamp=null){
@@ -555,29 +669,38 @@ function aiAction(ownPlanet,threshold,onlyCamp=null){
     else{target.troop=Math.max(1,target.troop-send);}
 }
 
+function checkPowerBalance(){
+    if(turn<=40||weakWarningTriggered)return;
+    const power={};CAMP_KEYS.forEach(ck=>{power[ck]=planets.filter(p=>p.camp===ck).reduce((s,p)=>s+p.troop,0);});
+    const entries=Object.entries(power).filter(([_,v])=>v>0&&_!==playerCampKey);if(entries.length===0)return;
+    const playerPower=power[playerCampKey]||0;
+    if(entries.every(([_,v])=>v>playerPower*1.5)){weakWarningTriggered=true;showEventModal("Overwhelming Force","Our total strength is far weaker than every enemy faction. Dire straits!");}
+}
+
 function getSendRatio(){return parseFloat(sendRatioSelect.value||"1.0");}
 
 function activateFinal(){
-    if(spectateMode)return;if(deterrenceActive){alert("Deterrent already active!");return;}
-    const camp=getCampWeaponDef(playerCampKey);if(!weapons.some(w=>w.camp===playerCampKey)){alert(`Need to build/deploy ${camp.lwName} first`);return;}
-    if(!selectedPlanet||selectedPlanet.camp!==playerCampKey){alert("Select a friendly planet to activate");return;}if(selectedPlanet.troop<400){alert("Need 400 forces");return;}
-    selectedPlanet.troop-=400;deterrenceActive=true;deterrenceTurnsLeft=5;updateWeaponStatusUI();render();showEventModal("Final Deterrent Activated","All enemies unite against you! Your forces stop growing for 5 turns. Hold your homeworld to win!");
+    if(spectateMode)return;if(deterrenceActive){alert("Deterrence already active!");return;}
+    const camp=getCampWeaponDef(playerCampKey);if(!weapons.some(w=>w.camp===playerCampKey)){alert(`Build/deploy ${camp.lwName} first!`);return;}
+    const planet = selectedPlanets.length===1 ? selectedPlanets[0] : null;
+    if(!planet || planet.camp!==playerCampKey){alert("Select a friendly planet");return;}if(planet.troop<400){alert("Need 400 troops");return;}
+    planet.troop-=400;deterrenceActive=true;deterrenceTurnsLeft=5;updateWeaponStatusUI();render();showEventModal("Deterrence Activated","All enemies unite against you. Your troops stop growing. Survive 5 turns to win!");
 }
 
 function endGame(victoryType){
     if(spectateMode)return;const camp=CAMPS[playerCampKey];const playerOwned=planets.filter(p=>p.camp===playerCampKey).length;
     let scoreRaw=Math.round(playerOwned*9+statKills*0.22+turn*2);let title="",resultText="",campMessage="";
-    if(victoryType==="conquest"){title="Conquest Victory";resultText="All enemy homeworlds captured! The galaxy is unified!";campMessage=camp.victorySpeech.conquest;}
-    else if(victoryType==="deterrence"){title="Deterrence Victory";resultText="Final deterrent forced a ceasefire";campMessage=camp.victorySpeech.deterrence;}
-    else{title="Defeat";resultText="Your last planet has fallen, the dream of galactic domination is shattered";campMessage=camp.victorySpeech.defeat;}
+    if(victoryType==="conquest"){title="Conquest Victory";resultText="All enemy homeworlds captured! The galaxy is united!";campMessage=camp.victorySpeech.conquest;}
+    else if(victoryType==="deterrence"){title="Deterrence Victory";resultText="You survived the onslaught and forced a ceasefire.";campMessage=camp.victorySpeech.deterrence;}
+    else{title="Defeat";resultText="Your last planet has fallen. The dream of galactic domination is shattered.";campMessage=camp.victorySpeech.defeat;}
     document.getElementById("winTitle").innerText=title;document.getElementById("resultType").innerText=resultText;
     document.getElementById("campVictoryMessage").innerText=campMessage;document.getElementById("statPlanet").innerText=playerOwned;
     document.getElementById("statKills").innerText=statKills;document.getElementById("statTurn").innerText=turn;document.getElementById("finalScore").innerText=scoreRaw;
     watchBtn.style.display=(victoryType==="defeat")?"inline-block":"none";resultModal.style.display="flex";deterrenceActive=false;
 }
 
-function startSpectate(){resultModal.style.display="none";spectateMode=true;}
-function closeModal(){resultModal.style.display="none";}
+function startSpectate(){ resultModal.style.display="none"; spectateMode = true; }
+function closeModal(){ resultModal.style.display="none"; }
 </script>
 </body>
 </html>
