@@ -503,7 +503,6 @@ function onMouseUp(e){
     } else {
         canvasClick(e);
     }
-    selectedWeapon = null;
 }
 
 function canvasClick(evt){
@@ -519,7 +518,7 @@ function canvasClick(evt){
     if(!hitPlanet){ selectedWeapon=null; selectedPlanets=[]; selDom.textContent="None"; selPlanetNameDom.textContent="-"; render(); return; }
 
     if(selectedWeapon){
-        if(selectedWeapon.type !== 'mobile') { alert("Only mobile superweapons can move"); selectedWeapon=null; return; }
+        if(selectedWeapon.type !== 'mobile') { alert("The murk and the silent cannot be moved."); selectedWeapon=null; return; }
         if(weaponMovedThisTurn) { alert("Already moved this turn"); selectedWeapon=null; render(); return; }
         const linkCheck = links.find(l=>(l.a.uid===selectedWeapon.planetId&&l.b.uid===hitPlanet.uid)||(l.b.uid===selectedWeapon.planetId&&l.a.uid===hitPlanet.uid));
         if(!linkCheck) { alert("Must move to adjacent planet"); selectedWeapon=null; render(); return; }
