@@ -9,6 +9,12 @@ A turn-based galactic strategy game with faction-based confrontations centered a
 
 ## 📋 Update Log
 
+### V3.15
+- Fixes:
+  1. Fixed: DSS/ASS will not move
+  2. Optimized text in some pop-up dialogs
+- Known issue: Democratic Dark Mode does not apply random intensity bonuses
+
 ### V3.14
 - **Fixed**: Reworked batch attack logic; added supply line connectivity validation to determine whether a target planet can be reached.
 
